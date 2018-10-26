@@ -39,11 +39,12 @@ jobs:
           command: bundle exec rake spec
       - run:
           name: run cloudkeeper-one
-          # TODO: run as a service
-          command: bundle exec bin/cloudkeeper-one sync --opennebula-endpoint=http://localhost:2633/RPC2 &
+          command: bundle exec bin/cloudkeeper-one sync --opennebula-endpoint=http://localhost:2633/RPC2
+          background: true
       - run:
           name: run cloudkeeper-tester
           command: |
+            sleep 10 # just to be sure, the cloudkeeper-one backend has started
             exec 3<> /dev/tcp/127.0.0.1/9876
             echo -ne "start" >&3
             while read -r line <&3; do echo "$line"; done
