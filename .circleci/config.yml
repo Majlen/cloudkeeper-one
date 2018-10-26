@@ -19,15 +19,15 @@ jobs:
           name: install cloudkeeper-one
           command: bundle install
       - persist_to_workspace:
-          root: /usr/local/bundle
+          root: /usr/local
           paths:
-             - *
+             - bundle
   test:
     <<: *config
     steps:
       - checkout
       - attach_workspace:
-          at: /usr/local/bundle
+          at: /usr/local
       - run:
           name: run local tests
           command: bundle exec rake spec
