@@ -1,5 +1,49 @@
 version: 2
+
+config: &config
+  working_directory: /root/working_directory
+  docker:
+    - image: ruby:2.5
+    - image: majlen/cloudkeeper-tester:latest
+    - image: majlen/opennebula:latest
+
 jobs:
+  build:
+    <<: *config
+    steps:
+      - checkout
+      - run:
+          name: install bundler
+          command: gem install bundler
+      - run:
+          name: install cloudkeeper-one
+          command: bundle install
+      - persist_to_workspace:
+          root: /usr/local/bundle
+          paths:
+             - *
+  test:
+    <<: *config
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /usr/local/bundle
+      - run:
+          name: run local tests
+          command: bundle exec rake spec
+      - run:
+          name: run cloudkeeper-one
+          # TODO: run as a service
+          command: bin/cloudkeeper-one sync --opennebula-endpoint=http://localhost:2633/RPC2 &
+      - run:
+          name: run cloudkeeper-tester
+          command: |
+            exec 3<> /dev/tcp/127.0.0.1/9876
+            echo -ne "start" >&3
+            while read -r line <&3; do echo "$line"; done
+            exec 3>&-
+            exec 3<&-
+
   build_upload:
     docker:
       - image: docker:stable
@@ -28,9 +72,15 @@ jobs:
           fi
 workflows:
   version: 2
-  release-docker-images:
+  build_test_release:
     jobs:
+      - build
+      - test:
+          requires:
+            - build
       - build_upload:
+          requires:
+            - test
           filters:
             tags:
               only: /v.*/
