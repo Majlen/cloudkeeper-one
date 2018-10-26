@@ -13,6 +13,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Pull submodules
+          command: git submodule update --init --recursive
+      - run:
           name: install bundler
           command: gem install bundler
       - run:
@@ -26,6 +29,9 @@ jobs:
     <<: *config
     steps:
       - checkout
+      - run:
+          name: Pull submodules
+          command: git submodule update --init --recursive
       - attach_workspace:
           at: /usr/local
       - run:
