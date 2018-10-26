@@ -40,7 +40,7 @@ jobs:
       - run:
           name: run cloudkeeper-one
           # TODO: run as a service
-          command: bin/cloudkeeper-one sync --opennebula-endpoint=http://localhost:2633/RPC2 &
+          command: bundle exec bin/cloudkeeper-one sync --opennebula-endpoint=http://localhost:2633/RPC2 &
       - run:
           name: run cloudkeeper-tester
           command: |
