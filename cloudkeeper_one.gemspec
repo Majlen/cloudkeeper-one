@@ -49,6 +49,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'settingslogic', '~> 2.0'
   spec.add_runtime_dependency 'thor', '~> 0.19'
   spec.add_runtime_dependency 'tilt', '~> 2.0'
+  spec.add_runtime_dependency 'xmlrpc', '~> 0.3.0'
   spec.add_runtime_dependency 'yell', '~> 2.0'
 
   spec.required_ruby_version = '>= 2.2.0'
